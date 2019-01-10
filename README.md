@@ -1,6 +1,6 @@
 # pokedex
 
-A new Flutter project.
+Project for a mobile pokedex written in [flutter](https://flutter.io), using [PokeAPI](https://pokeapi.co/) as backend
 
 ## Getting Started
 
