@@ -24,7 +24,7 @@ class HomePage extends StatefulWidget {
 
 class DefaultState extends State<HomePage> {
   
-  final pokemonController = new PokemonController(pokemons: []);
+  final pokemonController = new PokemonController();
   final scrollController = new ScrollController();
   List<Widget> pokemons = [Text("Empty List")];
   bool loading = false;
@@ -35,31 +35,39 @@ class DefaultState extends State<HomePage> {
     super.initState();
   }
 
+  //gets the list of pokemons from pokeApi and returns it
+  Future<String> getPokemonList() async {
+    final response = await http.get('https://pokeapi.co/api/v2/pokemon/');
+    if(response.statusCode < 400) {
+      return response.body;
+    } else {
+      throw Exception('Connection error\nStatus: ' + response.statusCode.toString());
+    }
+  }
+
+  //loads pokemon widgets into the "pokemons" list
+  Future<void> loadPokemons(String pokemonListJson, int count) async {
+    for(int i = 0; i < count; i++){
+      pokemonController.addPokemon(pokemonListJson).then((v) { 
+        setState(() {
+          pokemons = pokemonController.getWidgets();
+        });
+      });
+    }
+  }
+
   void _scrollListener() {
     print(scrollController.position.extentAfter);
     if(scrollController.position.extentAfter < 500){
-      fetchPokemons(18);
+      fetchPokemons(24);
     }
   }
 
   void fetchPokemons(int count) async {
     if(!loading){
       loading = true;
-      final response = await http.get('https://pokeapi.co/api/v2/pokemon/');
-      if(response.statusCode < 400) {
-        for(int i = 0; i < count; i++){
-          pokemonController.addPokemons(response.body).then((v) { 
-            setState(() {
-              if(i == count-1) loading = false;
-              pokemons = pokemonController.getWidgets();
-            });
-          });
-        }
-      } else {
-        throw Exception('Connection error\nStatus: ' + response.statusCode.toString());
-      }
-    } else {
-      return;
+      final pokemonListJson = await getPokemonList();
+      loadPokemons(pokemonListJson, count).then((v) => loading = false);
     }
   }
 
@@ -118,7 +126,7 @@ class DefaultState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     if(pokemons[0] is Text){
-      fetchPokemons(21);
+      fetchPokemons(30);
       return SafeArea(child: loadingScreen());
     }else {
       return SafeArea(child: mainScreen());

@@ -1,24 +1,30 @@
 import 'package:pokedex/model/pokemon.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:collection';
 import 'package:flutter/material.dart';
 
 class PokemonController {
 
-  List<Pokemon> pokemons;
+  Map<int, Pokemon> pokemons;
+  Map<int, Widget> widgets;
   int pokemonCount = -1;
 
-  PokemonController({this.pokemons});
-  
-  //TODO: make this function async so we can load pokemons faster
+  PokemonController(){
+    pokemons = new SplayTreeMap();
+    widgets = new SplayTreeMap();
+  }
+
   //https://pokeapi.co/api/v2/pokemon-form/
-  Future<void> addPokemons(String pokemonListJson){
+  //adds a pokemon to the "pokemons" map, and its widget to the "widgets" map
+  Future<void> addPokemon(String pokemonListJson){
     ++pokemonCount;
     List<dynamic> pokemonList = json.decode(pokemonListJson)["results"];
     Future<Pokemon> pokemon = fetchData(pokemonList[pokemonCount]);
-    return pokemon.then((p) {pokemons.add(p); pokemons.sort((a, b) => a.number - b.number);});
+    return pokemon.then((p) {pokemons.putIfAbsent(p.number, () => p); widgets.putIfAbsent(p.number, p.toWidget);});
   }
 
+  //fectches the pokemon's data from the url in the pokemon info from the pokemon list
   Future<Pokemon> fetchData(Map<String, dynamic> pokemon) async {
     //pokemon has name and url as keys
     final response = await http.get(pokemon["url"]);
@@ -31,11 +37,6 @@ class PokemonController {
   }
 
   List<Widget> getWidgets() {
-    List<Widget> images = [];
-    for (var pokemon in pokemons) {
-      images.add(pokemon.toWidget());
-    }
-  
-    return images;
+    return widgets.values.toList();
   }
 }
