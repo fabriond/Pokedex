@@ -47,16 +47,14 @@ class DefaultState extends State<HomePage> {
       loading = true;
       final response = await http.get('https://pokeapi.co/api/v2/pokemon/');
       if(response.statusCode < 400) {
-        for(int i = 0; i < count-1; i++){
-          await pokemonController.addPokemons(response.body);
-        }
-
-        pokemonController.addPokemons(response.body).then((v) { 
-          setState(() {
-            loading = false;
-            pokemons = pokemonController.getWidgets();
+        for(int i = 0; i < count; i++){
+          pokemonController.addPokemons(response.body).then((v) { 
+            setState(() {
+              if(i == count-1) loading = false;
+              pokemons = pokemonController.getWidgets();
+            });
           });
-        });
+        }
       } else {
         throw Exception('Connection error\nStatus: ' + response.statusCode.toString());
       }
@@ -93,10 +91,6 @@ class DefaultState extends State<HomePage> {
   Widget mainScreen() {
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the HomePage object that was created by
@@ -109,8 +103,6 @@ class DefaultState extends State<HomePage> {
 
       ),
       body: Container(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         color: widget.backgroundColor,
         child: Scrollbar(
           child: GridView(
@@ -120,11 +112,6 @@ class DefaultState extends State<HomePage> {
           )
         )
       ),
-      /*floatingActionButton: FloatingActionButton(
-        onPressed: fetchPokemons,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),*/ // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 
@@ -132,9 +119,9 @@ class DefaultState extends State<HomePage> {
   Widget build(BuildContext context) {
     if(pokemons[0] is Text){
       fetchPokemons(21);
-      return loadingScreen();
+      return SafeArea(child: loadingScreen());
     }else {
-      return mainScreen();
+      return SafeArea(child: mainScreen());
     }
   }
 }
