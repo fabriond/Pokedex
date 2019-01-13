@@ -1,6 +1,6 @@
 import 'package:pokedex/resources/color_pallet.dart';
+import 'package:pokedex/resources/http_client.dart';
 import 'package:pokedex/model/pokemon.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:recase/recase.dart';
 import 'dart:convert';
@@ -21,7 +21,7 @@ class SimplePokemon {
   }
 
   Future<Pokemon> toPokemon() async {
-    final resp = await http.get(pokemonUrl);
+    final resp = await client.get(pokemonUrl);
     if(resp.statusCode < 400){
       final pokemon = json.decode(resp.body);
       return Pokemon.fromJson(pokemon);

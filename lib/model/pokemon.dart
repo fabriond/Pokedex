@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:pokedex/resources/color_pallet.dart';
 import 'package:recase/recase.dart';
 
@@ -20,16 +18,6 @@ class Pokemon {
       name: name.titleCase,
       spriteURL: json["sprites"]["front_default"] as String
     );
-  }
-
-  static Future<Pokemon> fetchData(String url) async{
-    final response = await http.get(url);
-    if(response.statusCode < 400){
-      final pokemon = json.decode(response.body);
-      return Pokemon.fromJson(pokemon);
-    } else {
-      throw Exception('Connection error\nStatus: ' + response.statusCode.toString());
-    }
   }
 
   Widget toSimpleWidget(){

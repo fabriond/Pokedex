@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:pokedex/controller/pokemon_controller.dart';
-import 'package:flutter/foundation.dart';
 import 'package:pokedex/resources/pokemon_list.dart';
-import 'package:pokedex/model/simple_pokemon.dart';
 import 'package:pokedex/resources/color_pallet.dart';
+import 'package:pokedex/model/simple_pokemon.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
@@ -37,7 +36,7 @@ class DefaultState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: FutureBuilder<List<SimplePokemon>>(
-        future: PokemonController.fetchList(http.Client()),
+        future: PokemonController.fetchList(),
         builder: (context, snapshot) {
           if(snapshot.hasError) print(snapshot.error);
           if(snapshot.hasData){

@@ -1,11 +1,12 @@
+import 'package:pokedex/resources/http_client.dart';
 import 'package:pokedex/model/simple_pokemon.dart';
-import 'package:http/http.dart' as http;
 import 'package:isolate/isolate_runner.dart';
 import 'dart:convert';
 
 class PokemonController {
+
   //https://pokeapi.co/api/v2/pokemon/
-  static Future<List<SimplePokemon>> fetchList(http.Client client) async {
+  static Future<List<SimplePokemon>> fetchList() async {
     final response = await client.get('https://pokeapi.co/api/v2/pokemon/');
     final runner = await IsolateRunner.spawn();
     return runner.run(loadPokemons, response.body).whenComplete(() => runner.close());
