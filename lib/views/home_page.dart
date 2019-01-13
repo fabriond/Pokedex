@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pokedex/controller/pokemon_controller.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pokedex/resources/pokemon_list.dart';
+import 'package:pokedex/model/simple_pokemon.dart';
+import 'package:pokedex/resources/color_pallet.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title, this.backgroundColor}) : super(key: key);
+  HomePage({Key key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -16,120 +19,53 @@ class HomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
-  final Color backgroundColor;
 
   @override
   DefaultState createState() => DefaultState();
 }
 
 class DefaultState extends State<HomePage> {
-  
-  final pokemonController = new PokemonController();
-  final scrollController = new ScrollController();
-  List<Widget> pokemons = [Text("Empty List")];
-  bool loading = false;
-
-  @override
-  void initState() {
-    scrollController.addListener(_scrollListener);
-    super.initState();
-  }
-
-  //gets the list of pokemons from pokeApi and returns it
-  Future<String> getPokemonList() async {
-    final response = await http.get('https://pokeapi.co/api/v2/pokemon/');
-    if(response.statusCode < 400) {
-      return response.body;
-    } else {
-      throw Exception('Connection error\nStatus: ' + response.statusCode.toString());
-    }
-  }
-
-  //loads pokemon widgets into the "pokemons" list
-  Future<void> loadPokemons(String pokemonListJson, int count) async {
-    for(int i = 0; i < count; i++){
-      pokemonController.addPokemon(pokemonListJson).then((v) { 
-        setState(() {
-          pokemons = pokemonController.getWidgets();
-        });
-      });
-    }
-  }
-
-  void _scrollListener() {
-    print(scrollController.position.extentAfter);
-    if(scrollController.position.extentAfter < 500){
-      fetchPokemons(24);
-    }
-  }
-
-  void fetchPokemons(int count) async {
-    if(!loading){
-      loading = true;
-      final pokemonListJson = await getPokemonList();
-      loadPokemons(pokemonListJson, count).then((v) => loading = false);
-    }
-  }
 
   //evolution chain is at pokemon -(link)> pokemon-species -(link)> evolution-chain
+  
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(child: index());
+  }
+
+  Widget index(){
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.title)),
+      body: FutureBuilder<List<SimplePokemon>>(
+        future: PokemonController.fetchList(http.Client()),
+        builder: (context, snapshot) {
+          if(snapshot.hasError) print(snapshot.error);
+          if(snapshot.hasData){
+            return PokemonList(pokemons: snapshot.data);
+          } else{
+            return loadingScreen();
+          }
+        },
+      ),
+    );
+  }
 
   Widget loadingScreen(){
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the HomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Container(
-        color: widget.backgroundColor,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              CircularProgressIndicator(strokeWidth: 3.0),
-              Text('Loading...', textAlign: TextAlign.center)
-            ],
-          )
+    return Container(
+      color: ColorPallet.bodyColor,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            CircularProgressIndicator(
+              strokeWidth: 3.0, 
+              valueColor: AlwaysStoppedAnimation<Color>(ColorPallet.appBarColor)
+            ),
+            Text('Loading...', textAlign: TextAlign.center)
+          ],
         )
       )
     );
-  }
-
-  Widget mainScreen() {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the HomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Row(
-          children: <Widget>[
-            Text(widget.title),
-          ],
-        )
-
-      ),
-      body: Container(
-        color: widget.backgroundColor,
-        child: Scrollbar(
-          child: GridView(
-            controller: scrollController,
-            children: pokemons, 
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3)
-          )
-        )
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if(pokemons[0] is Text){
-      fetchPokemons(30);
-      return SafeArea(child: loadingScreen());
-    }else {
-      return SafeArea(child: mainScreen());
-    }
   }
 }
