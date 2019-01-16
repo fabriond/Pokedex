@@ -4,7 +4,7 @@ import 'package:pokedex/resources/color_pallet.dart';
 import 'package:pokedex/model/simple_pokemon.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
+import 'package:pokedex/resources/pokedex_bulb.dart';
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
 
@@ -34,7 +34,11 @@ class DefaultState extends State<HomePage> {
 
   Widget index(){
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(
+        leading: PokedexBulb(),
+        title: Text(widget.title),
+        centerTitle: true,
+      ),
       body: FutureBuilder<List<SimplePokemon>>(
         future: PokemonController.fetchList(),
         builder: (context, snapshot) {
@@ -51,7 +55,7 @@ class DefaultState extends State<HomePage> {
 
   Widget loadingScreen(){
     return Container(
-      color: ColorPallet.bodyColor,
+      color: ColorPallet.body,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -59,7 +63,7 @@ class DefaultState extends State<HomePage> {
           children: <Widget>[
             CircularProgressIndicator(
               strokeWidth: 3.0, 
-              valueColor: AlwaysStoppedAnimation<Color>(ColorPallet.appBarColor)
+              valueColor: AlwaysStoppedAnimation<Color>(ColorPallet.appBar)
             ),
             Text('Loading...', textAlign: TextAlign.center)
           ],

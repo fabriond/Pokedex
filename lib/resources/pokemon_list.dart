@@ -10,7 +10,7 @@ class PokemonList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: ColorPallet.bodyColor,
+      color: ColorPallet.body,
       child: GridView.builder(
         //each element is a pokemon card
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),

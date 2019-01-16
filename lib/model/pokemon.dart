@@ -24,13 +24,13 @@ class Pokemon {
     return Card(
       margin: EdgeInsets.all(2.0),
       clipBehavior: Clip.hardEdge,
-      color: ColorPallet.pokemonCardColor,
+      color: ColorPallet.pokemonCard,
       child: Column(
         children: <Widget>[
           CachedNetworkImage(
             imageUrl: this.spriteURL,
             placeholder: Placeholder(
-              color: ColorPallet.pokemonCardColor,
+              color: ColorPallet.pokemonCard,
               fallbackHeight: 96.0,
               fallbackWidth: 96.0,
             ),
