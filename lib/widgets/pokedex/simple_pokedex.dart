@@ -50,19 +50,11 @@ class SimplePokedex extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       color: ColorPallet.bodyContrast,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Placeholder(
-            color: ColorPallet.bodyContrast,
-            fallbackHeight: 96.0,
-            fallbackWidth: 96.0,
-          ),
-          Align(
-            alignment: Alignment.bottomCenter, 
-            child: Text(
-              this.region,
-              overflow: TextOverflow.ellipsis
-            )
-          )
+          Text(this.region),
+          Text("Pokedex")
         ]
       )
     );
