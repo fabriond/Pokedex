@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'color_pallet.dart';
+import 'package:pokedex/resources/color_pallet.dart';
 
 class PokedexBulb extends StatelessWidget {
   @override

@@ -6,5 +6,6 @@ class ColorPallet {
   static final pokedexBulbLight = Colors.white;
   static final pokedexBulbBorder = Colors.grey[400];
   static final body =  Colors.red[900];
+  static final bodyContrast = Colors.blue;
   static final pokemonCard = Colors.red[700];
 }

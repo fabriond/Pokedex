@@ -1,22 +1,26 @@
 import 'package:pokedex/resources/color_pallet.dart';
 import 'package:pokedex/resources/http_client.dart';
-import 'package:pokedex/model/pokemon.dart';
+import 'package:pokedex/widgets/pokemon/pokemon.dart';
 import 'package:flutter/material.dart';
 import 'package:recase/recase.dart';
 import 'dart:convert';
 
-class SimplePokemon {
-  String name;
-  String pokemonUrl;
+class SimplePokemon extends StatelessWidget{
+  final int number;
+  final String name;
+  final String pokemonUrl;
 
-  SimplePokemon({this.name, this.pokemonUrl});
+  SimplePokemon({this.number, this.name, this.pokemonUrl});
 
   //https://pokeapi.co/api/v2/pokemon/
   factory SimplePokemon.fromJson(Map<String, dynamic> json){
-    final name = ReCase(json["name"] as String);
+    final pkmn = json["pokemon_species"];
+    final name = ReCase(pkmn["name"] as String);
+    final url = (pkmn["url"] as String).replaceAll("pokemon-species", "pokemon");
     return SimplePokemon(
+      number: json["entry_number"],
       name: name.titleCase,
-      pokemonUrl: json["url"],
+      pokemonUrl: url,
     );
   }
 
@@ -30,13 +34,14 @@ class SimplePokemon {
     }
   }
 
-  Widget toWidget(){
+  @override
+  Widget build(BuildContext context){
     return FutureBuilder<Pokemon>(
       future: toPokemon(),
       builder: (context, snapshot){
         if(snapshot.hasError) print(snapshot.error);
         if(snapshot.hasData){
-          return snapshot.data.toSimpleWidget();
+          return snapshot.data;
         } else{
           return loadingPokemon();
         }

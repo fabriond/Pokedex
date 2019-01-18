@@ -3,16 +3,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:pokedex/resources/color_pallet.dart';
 import 'package:recase/recase.dart';
 
-class Pokemon {
-  int number;
-  String name;
-  String spriteURL;
+class Pokemon extends StatelessWidget {
+  final int number;
+  final String name;
+  final String spriteURL;
   
   Pokemon({this.number, this.name, this.spriteURL});
 
   //https://pokeapi.co/api/v2/pokemon/1/
   factory Pokemon.fromJson(Map<String, dynamic> json){
-    final name = ReCase(json["name"] as String);
+    final name = ReCase((json["name"] as String).replaceAll("-", " "));
     return Pokemon(
       number: json["id"] as int,
       name: name.titleCase,
@@ -20,7 +20,8 @@ class Pokemon {
     );
   }
 
-  Widget toSimpleWidget(){
+  @override
+  Widget build(BuildContext context){
     return Card(
       margin: EdgeInsets.all(2.0),
       clipBehavior: Clip.hardEdge,

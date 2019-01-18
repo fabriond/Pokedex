@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/views/home_page.dart';
-import 'package:pokedex/resources/color_pallet.dart';
+import 'package:pokedex/screens/home_screen.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(App());
 
-class MyApp extends StatelessWidget {
+class App extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -18,9 +17,8 @@ class MyApp extends StatelessWidget {
         // changing the primarySwatch below to Colors.green and then invoke
         // "hot reload". The application is not restarted.
         primarySwatch: Colors.red,
-        primaryColor: ColorPallet.appBar
       ),
-      home: HomePage(title: 'Pokedex'),
+      home: HomeScreen(title: 'Pokedex'),
     );
   }
 }
