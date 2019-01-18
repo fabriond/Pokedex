@@ -22,7 +22,7 @@ class PokemonListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: PokedexBulb(),
-        title: Text(simplePokedex.region),
+        title: Text(simplePokedex.region + " Pokedex"),
         centerTitle: true,
         backgroundColor: ColorPallet.appBar
       ),
